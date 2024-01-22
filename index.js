@@ -1,73 +1,65 @@
-*, *:before, *:after {
-	box-sizing: border-box;
+let startButton = document.getElementById("start");
+let resetButton = document.getElementById("reset");
+let timerDisplay = document.getElementById("timerDisplay");
+let wrapper = document.getElementById("wrapper");
+let seconds = 00;
+let ms = 00;
+let appendSeconds = document.getElementById("seconds");
+let appendMs = document.getElementById("ms");
+let interval;
+
+function startCount() {
+	resetButton.disabled = false;
+	startButton.innerText = 'Stop';
+	interval = setInterval(updateCount, 10);
+	timerDisplay.classList.remove('blinking');
+	wrapper.classList.add('running');
 }
-body {
-	margin: 0 auto;
-	padding: 4rem 0;
-	max-width: 60rem;
-	min-height: 100vh;
-	background: lightgray;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
+
+function stopCount() {
+	clearInterval(interval);
+	startButton.innerText = 'Start';
+	timerDisplay.classList.add('blinking');
+	wrapper.classList.remove('running');
 }
-.wrapper {
-	justify-content: space-around;
-	align-items: center;
-	width: 500px;
-	padding: 1.5rem;
-	text-align: center;
-	border-radius: 10px;
-	background: white;
-	margin: 0 auto;
+
+function resetCount() {
+	stopCount();
+
+	ms = '00';
+	seconds = '00';
+	appendMs.innerHTML = ms;
+	appendSeconds.innerHTML = seconds;
+	resetButton.disabled = true;
+	timerDisplay.classList.remove('blinking');
+}
+			
+startButton.addEventListener('click', () => {
+	if (startButton.innerText === 'Start') {
+		startCount();
+	} else {
+		stopCount();		
 	}
-.timerDisplay {
-	display: flex;
-	width: 50%;
-	border-radius: 10px;
-	font-size: 2em;
-	align-items: center;
-	justify-content: space-around;
-	text-align: center;
-	padding: 40px 0;
-	font-family: 'Wallpoet', serif;
-	background-color: #c4c0b3;
-	margin: 40px auto;
-	transition: background 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+});
+
+resetButton.addEventListener('click', resetCount);
+
+function updateCount() {
+	ms++;
+	if(ms <= 9) {
+		appendMs.innerHTML = String(ms).padStart(2, '0');
+	} 
+	if (ms > 9){
+		appendMs.innerHTML = String(ms).padStart(2, '0');
 	}
-.timerDisplay.blinking .time-unit {
-	animation: blink 1s ease-in-out infinite;
-}
-@keyframes blink {
-	0% {
-		opacity: 1;
+	if (ms > 99) {
+		seconds++;
+		appendSeconds.innerHTML = String(seconds).padStart(2, '0');
+		ms = 0;
+		appendMs.innerHTML = '00';
 	}
-	80% {
-		opacity: 0;
-	}
-}
-#start {
-	background-color: green;
-	color: white;
-}
-.wrapper.running #start {
-	background-color: red;
-}
-.wrapper.running .timerDisplay {
-	background-color: #a2ff9c;
-	box-shadow: 0 0 50px #1ef50f;
-	animation: shadow-blink .5s ease-in-out infinite;
-}
-@keyframes shadow-blink {
-	0% {
-		box-shadow: 0 0 50px 0 #1ef50f;
-	}
-	50% {
-		box-shadow: 0 0 50px 4px #1ef50f;
+	if (seconds > 9) {
+		appendSeconds.innerHTML = String(seconds).padStart(2, '0');
 	}
 }
-button {
-	border-radius: 10px;
-	font-size: 1em;
-}
+
